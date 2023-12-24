@@ -8,7 +8,7 @@ The library can be installed as a Node dependency from Github.
 Execute the following command from the `Scripts` in the folder of your mod.
 
 ```bash
-npm i https://github.com/banbury/...
+npm i https://github.com/Banbury/tp-uibuilder
 ```
 
 ### Manual
