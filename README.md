@@ -61,6 +61,15 @@ Since the `ui` helper functions return the widget object, the properties of the 
     ...
 ```
 
+#### frame Pseudo Widget
+The `WidgetFactory` contains a helper method `frame` that creates a group of widgets that form a frame with a colored border. The background color and the foreground color can be changed. It accepts a widget as a child.
+
+```Javascript
+    wf.frame(new tp.Color(1, 1, 1), new tp.Color(0.01, 0.01, 0.01), wf =>
+        ...
+    )
+```
+
 ### Changing Properties of the UI
 UIBuilder has helper methods to change the properties of the UI. These functions have to be called before calling `build()`.
 

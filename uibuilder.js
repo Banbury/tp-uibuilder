@@ -13,6 +13,18 @@ const tp = require('@tabletop-playground/api');
 */
 
 /**
+ * @typedef {Object} CanvasWidget
+ * @property {tp.Widget} w
+ * @property {[number, number, number, number]} p
+ */
+
+/**
+ * @callback CanvasWidgetsCallback
+ * @param {WidgetFactory} wf
+ * @returns {CanvasWidget[]}
+ */
+
+/**
  * Builder for UIs in Tabletop Playground.
  * 
  * Calling the build() function, adds an {@link tp.ScreenUIElement} to the screen or {@link tp.UIElement} a {@link tp.GameObject}.
@@ -101,6 +113,12 @@ class UIBuilder {
      */
     playerPermission(value) {
         this.ui.players = value;
+        return this;
+    }
+
+    anchor(x, y) {
+        this.ui.anchorX = x;
+        this.ui.anchorY = y;
         return this;
     }
 }
@@ -267,13 +285,13 @@ class WidgetFactory {
 
     /**
      * Creates a {@link tp.Canvas}
-     * @param {WidgetsCallback} widgetsFn 
+     * @param {CanvasWidgetsCallback} widgetsFn 
      * @returns 
      */
     canvas(widgetsFn) {
         let w = new tp.Canvas();
         if (widgetsFn) {
-            widgetsFn(this).forEach(it => w.addChild(it));
+            widgetsFn(this).forEach(it => w.addChild(it.w, it.p[0], it.p[1], it.p[2], it.p[3]));
         }
         return w;
     }
@@ -370,6 +388,31 @@ class WidgetFactory {
         }
         return w;
     }
+
+    /**
+     * Creates a frame with a colored border
+     * @param {tp.Color} frameColor 
+     * @param {tp.Color} backgroundColor 
+     * @param {WidgetCallback} widgetFn 
+     * @returns 
+     */
+    frame(frameColor, backgroundColor, widgetFn) {
+        let w = new Border();
+        w.setColor(backgroundColor);
+        let layout1 = new tp.LayoutBox().setPadding(8, 8, 8, 8);
+        let frameBorder = new tp.Border().setColor(frameColor);
+        layout1.setChild(frameBorder);
+        let layout2 = new tp.LayoutBox().setPadding(1, 1, 1, 1);
+        frameBorder.setChild(layout2);
+        let innerBorder = new tp.Border().setColor(backgroundColor);
+        layout2.setChild(innerBorder);
+        w.setChild(layout1);
+
+        if (widgetFn) {
+            innerBorder.setChild(widgetFn(this));
+        }
+        return w;
+    }
 }
 
-module.exports = UIBuilder;
+module.exports = { UIBuilder, WidgetFactory };
